@@ -2,13 +2,18 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { QuizCard } from '@/components/QuizCard';
+import { useParams } from 'next/navigation';
 import { StatusMessage } from '@/components/StatusMessage';
+import { QuizRunner } from '@/components/QuizRunner';
 import { Button } from '@/components/ui/Button';
-import type { QuizSummary } from '@/lib/types';
+import { Card, CardHeader, CardTitle, CardBody } from '@/components/ui/Card';
+import type { QuizDetail } from '@/lib/types';
 
-export default function HomePage() {
-  const [quizzes, setQuizzes] = useState<QuizSummary[]>([]);
+export default function QuizDetailPage() {
+  const params = useParams();
+  const id = params?.id as string;
+  
+  const [quiz, setQuiz] = useState<QuizDetail | null>(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
 
@@ -21,39 +26,50 @@ export default function HomePage() {
       return;
     }
 
-    fetch(`${API}/api/quizzes`)
-      .then((res) => res.json())
+    if (!id) {
+      setError('Quiz ID is missing');
+      setLoading(false);
+      return;
+    }
+
+    fetch(`${API}/api/quizzes/${id}`)
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`Failed to load quiz: ${res.status}`);
+        }
+        return res.json();
+      })
       .then((data) => {
-        setQuizzes(Array.isArray(data) ? data : []);
+        setQuiz(data.quiz || null);
         setLoading(false);
       })
-      .catch(() => {
-        setError('Failed to load quizzes');
+      .catch((err) => {
+        setError(err instanceof Error ? err.message : 'Failed to load quiz');
         setLoading(false);
       });
-  }, []);
+  }, [id]);
 
   return (
-    <main className="app-container flex flex-col gap-8 py-10">
-      <div className="space-y-3">
-        <h1 className="text-3xl font-semibold tracking-tight text-white">Explore Quizzes</h1>
-        <p className="text-sm text-white">Pick a quiz and start learning. Create more from the admin dashboard.</p>
+    <main className="app-container py-10 space-y-8">
+      <div className="flex items-center justify-between">
+        <h1 className="heading-lg text-white">{quiz?.title ?? 'Quiz'}</h1>
         <Button asChild variant="secondary" className="pressable">
-          <Link href="/admin">Go to Admin</Link>
+          <Link href="/">← Back</Link>
         </Button>
       </div>
-
-      {loading && <StatusMessage type="info" message="Loading quizzes..." />}
+      
+      {loading && <StatusMessage type="info" message="Loading quiz..." />}
       {error && <StatusMessage type="error" message={error} />}
-      {!loading && !error && quizzes.length === 0 && (
-        <StatusMessage type="info" message="No quizzes yet. Create one from the admin page." />
+      {quiz && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Questions</CardTitle>
+          </CardHeader>
+          <CardBody>
+            <QuizRunner quiz={quiz} />
+          </CardBody>
+        </Card>
       )}
-
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {quizzes.map((quiz) => (
-          <QuizCard key={quiz.id} quiz={quiz} />
-        ))}
-      </div>
     </main>
   );
 }

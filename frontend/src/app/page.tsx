@@ -1,19 +1,43 @@
+"use client";
+
 import Link from 'next/link';
-import { fetchQuizzes } from '@/lib/api';
+import { useEffect, useState } from 'react';
 import { QuizCard } from '@/components/QuizCard';
 import { StatusMessage } from '@/components/StatusMessage';
 import type { QuizSummary } from '@/lib/types';
 import { Button } from '@/components/ui/Button';
 
+export default function HomePage() {
+  const [quizzes, setQuizzes] = useState<QuizSummary[]>([]);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(true);
 
-export default async function HomePage() {
-  let quizzes: QuizSummary[] = [];
-  let error = '';
-  try {
-    quizzes = await fetchQuizzes();
-  } catch (err) {
-    error = err instanceof Error ? err.message : 'Failed to load quizzes';
-  }
+  useEffect(() => {
+    const API = process.env.NEXT_PUBLIC_API_URL;
+
+    if (!API) {
+      setError('API URL not configured');
+      setLoading(false);
+      return;
+    }
+
+    fetch(`${API}/api/quizzes`)
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`Failed to fetch: ${res.status}`);
+        }
+        return res.json();
+      })
+      .then((data) => {
+        // Backend returns { quizzes: [...] }
+        setQuizzes(data.quizzes || []);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setError(err instanceof Error ? err.message : 'Failed to load quizzes');
+        setLoading(false);
+      });
+  }, []);
 
   return (
     <main className="app-container flex flex-col gap-8 py-10">
@@ -25,8 +49,9 @@ export default async function HomePage() {
         </Button>
       </div>
  
+      {loading && <StatusMessage type="info" message="Loading quizzes..." />}
       {error && <StatusMessage type="error" message={error} />}
-      {!error && quizzes.length === 0 && (
+      {!loading && !error && quizzes.length === 0 && (
         <StatusMessage type="info" message="No quizzes yet. Create one from the admin page." />
       )}
 
