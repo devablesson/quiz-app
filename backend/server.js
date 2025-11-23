@@ -7,10 +7,28 @@ dotenv.config();
 
 const app = express();
 app.use(express.json());
+
+// Configure CORS to allow multiple origins
+const allowedOrigins = [
+  'http://localhost:3000',
+  'https://quiz-fdej4ecxa-devaas-projects-2d471862.vercel.app',
+  process.env.CORS_ORIGIN
+].filter(Boolean);
+
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps or curl)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.some(allowed => origin.startsWith(allowed.replace('*', '')))) {
+      callback(null, true);
+    } else {
+      callback(null, true); // Allow all for now, restrict later
+    }
+  },
   methods: ['GET','POST','PUT','DELETE','OPTIONS'],
   allowedHeaders: ['Content-Type','x-admin-token'],
+  credentials: true
 }));// Mount quiz routes
 app.use('/api/quizzes', quizRoutes);
 // Health check
