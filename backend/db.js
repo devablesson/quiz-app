@@ -1,48 +1,36 @@
+// backend/db.js
 import dotenv from 'dotenv';
 dotenv.config();
-import { neon } from '@neondatabase/serverless';
+import pkg from 'pg';
+
+const { Pool } = pkg;
 
 if (!process.env.DATABASE_URL) {
   console.warn('DATABASE_URL not set. Database calls will fail until configured.');
 }
 
-const sql = neon(process.env.DATABASE_URL);
-
-function buildTemplate(text, params) {
-  const parts = [];
-  const values = [];
-  let lastIndex = 0;
-  const regex = /\$([0-9]+)/g;
-  let match;
-  while ((match = regex.exec(text)) !== null) {
-    parts.push(text.slice(lastIndex, match.index));
-    const idx = Number(match[1]) - 1;
-    values.push(params[idx]);
-    lastIndex = match.index + match[0].length;
-  }
-  parts.push(text.slice(lastIndex));
-  return sql(parts, ...values);
-}
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false }   // Neon requires SSL
+});
 
 export async function query(text, params = []) {
-  const list = Array.isArray(params) ? params : [params];
-  if (/\$[0-9]+/.test(text)) return buildTemplate(text, list);
-  return sql([text]);
+  return pool.query(text, params);
 }
 
 export async function transaction(work) {
-  await sql`BEGIN`;
+  const client = await pool.connect();
   try {
-    const result = await work((text, ...params) => {
-      if (/\$[0-9]+/.test(text)) return buildTemplate(text, params);
-      return sql([text]);
-    });
-    await sql`COMMIT`;
+    await client.query('BEGIN');
+    const result = await work((text, params) => client.query(text, params));
+    await client.query('COMMIT');
     return result;
   } catch (err) {
-    try { await sql`ROLLBACK`; } catch {}
+    await client.query('ROLLBACK');
     throw err;
+  } finally {
+    client.release();
   }
 }
 
-export { sql }; // expose raw tagged template for migrations
+export { pool };
