@@ -17,7 +17,6 @@ export interface QuizDetail extends QuizSummary {
 
 export interface CreateQuestionPayload {
   text: string;
-  type: QuestionKind;
   options: Record<string, unknown>;
   correct_option: string;
 }

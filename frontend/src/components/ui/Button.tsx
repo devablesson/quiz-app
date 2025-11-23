@@ -8,10 +8,10 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   asChild?: boolean; // if true, do not render a native button, but enhance the single child element
 }
 
-const base = 'inline-flex items-center justify-center rounded-2xl px-5 py-2.5 text-sm font-medium transition-all duration-200 active:scale-[.97] disabled:opacity-50 disabled:cursor-not-allowed pressable';
+const base = 'inline-flex items-center justify-center rounded-2xl px-5 py-2.5 text-sm font-medium transition-all duration-200 active:scale-[.97] disabled:bg-gray-300 disabled:text-gray-600 disabled:cursor-not-allowed pressable';
 const variants: Record<string,string> = {
   primary: 'bg-[color:var(--accent)] hover:bg-[color:var(--accent-hover)] text-white shadow-sm hover:shadow-md',
-  secondary: 'bg-[color:var(--card)] text-[color:var(--foreground)] border border-[color:var(--border)] hover:border-[color:var(--border-strong)] shadow-sm hover:shadow-md',
+  secondary: 'bg-white text-black border border-gray-400 hover:border-gray-600 shadow-sm hover:shadow-md',
   danger: 'bg-red-600 hover:bg-red-500 text-white shadow-sm hover:shadow-md'
 };
 

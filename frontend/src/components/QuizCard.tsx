@@ -11,14 +11,14 @@ export function QuizCard({ quiz }: Props) {
       <CardHeader className="flex items-start justify-between">
         <div>
           <CardTitle>{quiz.title}</CardTitle>
-          <p className="mt-1 text-xs tracking-wide text-gray-500">ID: {quiz.id}</p>
+          <p className="mt-1 text-xs tracking-wide text-black">ID: {quiz.id}</p>
         </div>
         <Button asChild variant="primary" className="pressable scale-[.98] group-hover:scale-100">
           <Link href={`/quiz/${quiz.id}`}>Take Quiz</Link>
         </Button>
       </CardHeader>
       <CardBody>
-        <p className="text-sm text-gray-600 leading-relaxed">Challenge yourself with this quiz. Click Take Quiz to begin.</p>
+        <p className="text-sm text-black leading-relaxed">Challenge yourself with this quiz. Click Take Quiz to begin.</p>
       </CardBody>
     </Card>
   );

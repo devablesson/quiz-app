@@ -50,12 +50,27 @@ export default function AdminPage() {
 
     const payload: CreateQuizPayload = {
       title: title.trim(),
-      questions: questions.map(({ text, type, options, correct_option }) => ({
-        text: text.trim(),
-        type,
-        options,
-        correct_option: correct_option.trim(),
-      })),
+      questions: questions.map(({ text, options, correct_option }) => {
+        // Transform options format from {choices: [...]} to {a: "...", b: "...", ...}
+        // but ONLY for MCQ/TRUE_FALSE, not for TEXT questions
+        let transformedOptions = options;
+        if ('choices' in options && Array.isArray(options.choices)) {
+          transformedOptions = {};
+          const keys = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+          options.choices.forEach((choice: string, idx: number) => {
+            if (idx < keys.length) {
+              transformedOptions[keys[idx]] = choice;
+            }
+          });
+        }
+        // For TEXT questions, options will be {placeholder: "...", reference: "..."}
+        // For MCQ/TRUE_FALSE, options will be {a: "...", b: "...", ...}
+        return {
+          text: text.trim(),
+          options: transformedOptions,
+          correct_option: correct_option.trim(),
+        };
+      }),
     };
 
     try {
@@ -74,8 +89,8 @@ export default function AdminPage() {
   return (
     <main className="app-container py-10 space-y-8">
       <div className="space-y-3">
-        <h1 className="heading-lg">Create a New Quiz</h1>
-        <p className="text-sm text-muted">Publish quizzes instantly. Provide clear questions and correct answers.</p>
+        <h1 className="heading-lg text-white">Create a New Quiz</h1>
+        <p className="text-sm text-white">Publish quizzes instantly. Provide clear questions and correct answers.</p>
       </div>
       {status && <StatusMessage type={status.type} message={status.msg} onClose={() => setStatus(null)} />}
       <Card>
@@ -84,11 +99,11 @@ export default function AdminPage() {
         </CardHeader>
         <form onSubmit={handleSubmit} className="space-y-6">
           <CardBody>
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium text-black">
               Title
               <input
                 type="text"
-                className="mt-2 w-full rounded-xl border border-[color:var(--border)] bg-white px-4 py-2.5 text-sm focus:border-[color:var(--border-strong)]"
+                className="mt-2 w-full rounded-xl border border-[color:var(--border)] bg-white px-4 py-2.5 text-sm text-black placeholder:text-gray-700 focus:border-[color:var(--border-strong)]"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Enter quiz title"

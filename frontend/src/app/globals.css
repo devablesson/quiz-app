@@ -43,7 +43,7 @@
 html, body { height: 100%; }
 body {
   background: var(--background);
-  color: var(--foreground);
+  color: #000;
   font-family: var(--font-geist-sans), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   line-height: 1.5;
@@ -51,9 +51,7 @@ body {
 }
 
 h1,h2,h3,h4,h5,h6 { font-weight: 600; letter-spacing: -0.5px; }
-p,li,span { color: var(--foreground); }
-small { color: var(--muted); }
-.text-muted { color: var(--muted); }
+.text-muted { color: #000; }
 .heading-lg { @apply text-3xl md:text-4xl font-semibold tracking-tight; }
 .heading-md { @apply text-2xl font-semibold tracking-tight; }
 .heading-sm { @apply text-xl font-semibold tracking-tight; }

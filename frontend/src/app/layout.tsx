@@ -29,9 +29,9 @@ export default function RootLayout({
         <Header />
         <div className="flex-1 w-full py-6">{children}</div>
         <footer className="border-t border-grey-200/70 mt-12">
-          <div className="app-container py-8 text-xs text-black-500 flex items-center justify-between">
+          <div className="app-container py-8 text-xs text-white flex items-center justify-between">
             <span>© {new Date().getFullYear()} Quiz Manager</span>
-            <span className="opacity-70">Built with Next.js</span>
+            <span>Built with Next.js</span>
           </div>
         </footer>
       </body>

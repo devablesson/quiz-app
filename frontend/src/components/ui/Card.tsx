@@ -26,7 +26,7 @@ export function CardHeader({ children, className, ...rest }: SectionProps) {
   return <div className={clsx("px-4 py-4 md:px-6 md:py-5 border-b border-gray-100", className)} {...rest}>{children}</div>;
 }
 export function CardTitle({ children, className, ...rest }: SectionProps) {
-  return <h2 className={clsx("text-lg font-semibold tracking-tight text-gray-800", className)} {...rest}>{children}</h2>;
+  return <h2 className={clsx("text-lg font-semibold tracking-tight text-black", className)} {...rest}>{children}</h2>;
 }
 export function CardBody({ children, className, ...rest }: SectionProps) {
   return <div className={clsx("px-4 py-4 md:px-6 md:py-5 space-y-4", className)} {...rest}>{children}</div>;

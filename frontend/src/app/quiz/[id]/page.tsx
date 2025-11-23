@@ -7,11 +7,11 @@ import { Button } from '@/components/ui/Button';
 import { Card, CardHeader, CardTitle, CardBody } from '@/components/ui/Card';
 
 interface Props {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 export default async function QuizPage({ params }: Props) {
-  const { id } = params;
+  const { id } = await params;
   let quiz: QuizDetail | null = null;
   let error = '';
   try {
@@ -23,7 +23,7 @@ export default async function QuizPage({ params }: Props) {
   return (
     <main className="app-container py-10 space-y-8">
       <div className="flex items-center justify-between">
-        <h1 className="heading-lg">{quiz?.title ?? 'Quiz'}</h1>
+        <h1 className="heading-lg text-white">{quiz?.title ?? 'Quiz'}</h1>
         <Button asChild variant="secondary" className="pressable">
           <Link href="/">← Back</Link>
         </Button>

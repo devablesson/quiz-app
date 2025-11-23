@@ -11,8 +11,8 @@ export function Header() {
           <span className="tracking-tight font-bold force-black">Quiz Manager</span>
         </Link>
         <nav className="flex items-center gap-5 text-sm">
-          <Link href="/" className="text-gray-700 hover:text-gray-900 transition">Home</Link>
-          <Link href="/admin" className="text-gray-700 hover:text-gray-900 transition">Admin</Link>
+          <Link href="/" className="text-black hover:text-blue-600 transition font-medium">Home</Link>
+          <Link href="/admin" className="text-black hover:text-blue-600 transition font-medium">Admin</Link>
         </nav>
       </div>
     </header>
