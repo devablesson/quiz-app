@@ -29,8 +29,8 @@ export default function HomePage() {
         return res.json();
       })
       .then((data) => {
-        // Backend returns { quizzes: [...] }
-        setQuizzes(data.quizzes || []);
+        // Backend returns array directly
+        setQuizzes(Array.isArray(data) ? data : []);
         setLoading(false);
       })
       .catch((err) => {
