@@ -29,15 +29,12 @@ export async function createQuiz(req, res, next) {
       if (!text || typeof text !== 'string') invalid.push({ index: i, reason: 'text required' });
       if (!options || typeof options !== 'object') invalid.push({ index: i, reason: 'options object required' });
       else {
-        // Check if this is a TEXT question (has placeholder, reference, etc.) or MCQ/TRUE_FALSE (has a, b, c keys)
         const hasChoiceKeys = Object.keys(options).some(k => k.length === 1 && k >= 'a' && k <= 'z');
         if (hasChoiceKeys) {
-          // MCQ or TRUE_FALSE - require at least 2 options and correct_option must be a key
           if (Object.keys(options).length < 2) invalid.push({ index: i, reason: 'at least two options required' });
           if (!correct_option || typeof correct_option !== 'string') invalid.push({ index: i, reason: 'correct_option required' });
           else if (!Object.prototype.hasOwnProperty.call(options, correct_option)) invalid.push({ index: i, reason: 'correct_option key not in options' });
         } else {
-          // TEXT question - correct_option is the reference answer, doesn't need to match keys
           if (!correct_option || typeof correct_option !== 'string') invalid.push({ index: i, reason: 'correct_option required' });
         }
       }
@@ -68,7 +65,12 @@ export async function createQuiz(req, res, next) {
 export async function getQuizzes(req, res, next) {
   try {
     const rows = await query(SELECT_QUIZZES, []);
-    res.json({ quizzes: rows });
+
+    // ******* FIX APPLIED HERE *******
+    // OLD: res.json({ quizzes: rows });
+    // NEW: return pure array so frontend can map()
+    res.json(rows);
+
   } catch (err) {
     next(err);
   }
@@ -113,7 +115,7 @@ export async function deleteQuiz(req, res, next) {
     const { id } = req.params;
     const rows = await query(DELETE_QUIZ, [id]);
     if (rows.length === 0) return res.status(404).json({ error: 'Quiz not found' });
-    res.json({ deleted: Number(id) });
+    res.json(rows);
   } catch (err) {
     next(err);
   }
