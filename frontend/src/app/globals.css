@@ -2,13 +2,17 @@
 
 /* Modern neutral palette */
 :root {
-  --background: #f5f7fa; /* cool gray */
-  --foreground: #1f2937; /* slate-800 */
+  --background: #f3f4f6; /* light cool gray */
+  --foreground: #111827; /* high contrast */
+  --muted: #4b5563;
   --card: #ffffff;
+  --card-muted: #f9fafb;
   --border: #e5e7eb;
-  --accent: #1d4ed8; /* blue-700 */
-  --accent-hover: #2563eb; /* blue-600 */
-  --accent-soft: #dbeafe; /* blue-100 */
+  --border-strong: #d1d5db;
+  --accent: #2563eb; /* blue-600 */
+  --accent-hover: #1d4ed8; /* blue-700 */
+  --accent-soft: #eff6ff; /* blue-50 */
+  --focus-ring: #93c5fd; /* blue-300 */
 }
 
 @theme inline {
@@ -22,13 +26,17 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0f1620;
-    --foreground: #f1f5f9;
+    --background: #0f172a;
+    --foreground: #f8fafc;
+    --muted: #cbd5e1;
     --card: #1e293b;
+    --card-muted: #1e293b;
     --border: #334155;
+    --border-strong: #475569;
     --accent: #3b82f6;
-    --accent-hover: #60a5fa;
+    --accent-hover: #1d4ed8;
     --accent-soft: #1e3a8a;
+    --focus-ring: #60a5fa;
   }
 }
 
@@ -38,7 +46,18 @@ body {
   color: var(--foreground);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
+  line-height: 1.5;
+  font-size: 16px;
 }
+
+h1,h2,h3,h4,h5,h6 { font-weight: 600; letter-spacing: -0.5px; }
+p,li,span { color: var(--foreground); }
+small { color: var(--muted); }
+.text-muted { color: var(--muted); }
+.heading-lg { @apply text-3xl md:text-4xl font-semibold tracking-tight; }
+.heading-md { @apply text-2xl font-semibold tracking-tight; }
+.heading-sm { @apply text-xl font-semibold tracking-tight; }
+.prose-base { @apply leading-relaxed; }
 
 /* Utility helpers */
 .app-container { @apply mx-auto max-w-5xl px-4 md:px-8; }
@@ -47,8 +66,10 @@ body {
 
 /* Button animation scaling */
 .pressable { @apply transition-transform duration-200 ease-out; }
-.pressable:hover { transform: translateY(-1px); }
+.pressable:hover { transform: translateY(-2px); }
 .pressable:active { transform: translateY(0); }
+
+* :focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
 
 /* Scrollbars subtle */
 * { scrollbar-width: thin; }
@@ -60,4 +81,7 @@ body {
 /* Smooth fade */
 .fade-in { animation: fadeIn .3s ease; }
 @keyframes fadeIn { from { opacity:0; transform: translateY(4px);} to { opacity:1; transform: translateY(0);} }
+
+/* Force black text utility (overrides dark mode foreground) */
+.force-black { color: #000 !important; }
 

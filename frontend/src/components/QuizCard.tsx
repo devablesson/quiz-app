@@ -13,7 +13,7 @@ export function QuizCard({ quiz }: Props) {
           <CardTitle>{quiz.title}</CardTitle>
           <p className="mt-1 text-xs tracking-wide text-gray-500">ID: {quiz.id}</p>
         </div>
-        <Button as-child variant="primary" className="pressable scale-[.98] group-hover:scale-100">
+        <Button asChild variant="primary" className="pressable scale-[.98] group-hover:scale-100">
           <Link href={`/quiz/${quiz.id}`}>Take Quiz</Link>
         </Button>
       </CardHeader>

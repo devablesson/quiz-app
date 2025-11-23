@@ -19,7 +19,7 @@ export default async function HomePage() {
       <div className="space-y-3">
         <h1 className="text-3xl font-semibold tracking-tight text-gray-900">Explore Quizzes</h1>
         <p className="text-sm text-gray-600">Pick a quiz and start learning. Create more from the admin dashboard.</p>
-        <Button as-child variant="secondary" className="pressable">
+        <Button asChild variant="secondary" className="pressable">
           <Link href="/admin">Go to Admin</Link>
         </Button>
       </div>

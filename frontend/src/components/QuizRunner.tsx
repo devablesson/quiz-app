@@ -5,7 +5,7 @@ import type { QuizDetail, SubmitQuizResult } from '@/lib/types';
 import { submitQuiz } from '@/lib/api';
 import { StatusMessage } from './StatusMessage';
 import { Button } from './ui/Button';
-import { Card, CardBody } from './ui/Card';
+import { Card } from './ui/Card';
 import { Progress } from './ui/Progress';
 
 interface Props {
@@ -96,13 +96,9 @@ export function QuizRunner({ quiz }: Props) {
       </Card>
 
       {quiz.questions.map((question, idx) => (
-        <Card key={question.id} className="p-6 space-y-4">
-          <p className="text-sm font-semibold text-gray-800">
-            Question {idx + 1}
-          </p>
-            <h3 className="text-base font-medium text-gray-900 leading-relaxed">
-              {question.text}
-            </h3>
+        <Card key={question.id} className="p-6 space-y-5">
+          <p className="text-xs font-semibold tracking-wide text-[color:var(--accent)] uppercase">Question {idx + 1}</p>
+          <h3 className="text-base font-medium text-gray-900 leading-relaxed">{question.text}</h3>
           {Array.isArray(question.options?.choices) ? renderChoices(question.id, idx) : renderInput(question.id)}
         </Card>
       ))}
