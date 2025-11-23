@@ -2,11 +2,11 @@
 
 A modern, full-stack quiz management application built with Next.js and Express.js. Create, manage, and take interactive quizzes with support for multiple question types including Multiple Choice, True/False, and Short Text questions.
 
-> **Live Demo**: [View Demo](#) | **Documentation**: [Full Docs](#deployment-guide)
+> **Live Demo**: 
 
 ---
 
-## 📋 Table of Contents
+## Table of Contents
 
 - [Features](#-features)
 - [Tech Stack](#️-tech-stack)
