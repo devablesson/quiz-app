@@ -1,0 +1,15 @@
+{
+  "title": "Async JS",
+  "questions": [
+    {
+      "text": "Which API returns a Promise?",
+      "options": { "a": "setTimeout", "b": "fetch", "c": "addEventListener", "d": "console.log" },
+      "correct_option": "b"
+    },
+    {
+      "text": "Keyword to wait for a promise?",
+      "options": { "a": "wait", "b": "yield", "c": "await", "d": "defer" },
+      "correct_option": "c"
+    }
+  ]
+}

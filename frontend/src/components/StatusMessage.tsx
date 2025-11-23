@@ -5,9 +5,9 @@ type Props = {
 };
 
 const colorMap: Record<string,string> = {
-  info: 'bg-blue-50 text-blue-700 ring-1 ring-blue-200',
-  error: 'bg-red-50 text-red-700 ring-1 ring-red-200',
-  success: 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200',
+  info: 'bg-blue-50 text-blue-900 ring-1 ring-blue-200',
+  error: 'bg-red-50 text-red-900 ring-1 ring-red-200',
+  success: 'bg-emerald-50 text-emerald-900 ring-1 ring-emerald-200',
 };
 
 export function StatusMessage({ type = 'info', message, onClose }: Props) {
@@ -18,7 +18,7 @@ export function StatusMessage({ type = 'info', message, onClose }: Props) {
       {onClose && (
         <button
           onClick={onClose}
-          className="text-xs opacity-70 hover:opacity-100 transition"
+          className="text-xs text-black hover:text-gray-600 transition"
           aria-label="Close notification"
         >
           ✕

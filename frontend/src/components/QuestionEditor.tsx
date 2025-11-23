@@ -41,31 +41,31 @@ export function QuestionEditor({ question, onChange, onRemove }: Props) {
   };
 
   return (
-    <div className="border border-slate-200 rounded-lg p-4 space-y-3 bg-white">
+    <div className="rounded-2xl ring-1 ring-[color:var(--border)] bg-white shadow-sm p-5 space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="font-semibold text-slate-900">Question</h3>
+        <h3 className="font-semibold text-black tracking-tight">Question</h3>
         <button
           type="button"
           onClick={() => onRemove(question.id)}
-          className="text-sm text-red-600 hover:text-red-700"
+          className="inline-flex items-center rounded-xl border border-gray-400 px-3 py-1 text-xs font-medium text-black hover:bg-gray-100 transition"
         >
           Remove
         </button>
       </div>
-      <label className="block text-sm font-medium text-slate-700">
+      <label className="block text-sm font-medium text-black">
         Prompt
         <textarea
-          className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
+          className="mt-2 w-full rounded-xl border border-[color:var(--border)] bg-white px-4 py-2.5 text-sm text-black placeholder:text-gray-700 focus:border-[color:var(--border-strong)]"
           value={question.text}
           onChange={(e) => update({ text: e.target.value })}
           placeholder="Enter question prompt"
           required
         />
       </label>
-      <label className="block text-sm font-medium text-slate-700">
+      <label className="block text-sm font-medium text-black">
         Type
         <select
-          className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
+          className="mt-2 w-full rounded-xl border border-[color:var(--border)] bg-white px-4 py-2.5 text-sm text-black focus:border-[color:var(--border-strong)]"
           value={question.type}
           onChange={(e) => {
             const nextType = e.target.value as QuestionKind;
@@ -78,21 +78,21 @@ export function QuestionEditor({ question, onChange, onRemove }: Props) {
           }}
         >
           {typeOptions.map((opt) => (
-            <option key={opt.value} value={opt.value}>
+            <option key={opt.value} value={opt.value} className="text-black bg-white">
               {opt.label}
             </option>
           ))}
         </select>
       </label>
 
-      {question.type === 'MCQ' && (
+      {(question.type === 'MCQ' || question.type === 'TRUE_FALSE') && (
         <div className="space-y-2">
-          <p className="text-sm font-medium text-slate-700">Choices</p>
+          <p className="text-sm font-medium text-black">Choices</p>
           {mcqChoices.map((choice, idx) => (
             <input
               key={idx}
               type="text"
-              className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
+              className="w-full rounded-xl border border-[color:var(--border)] bg-white px-4 py-2 text-sm text-black placeholder:text-gray-700 focus:border-[color:var(--border-strong)]"
               value={choice}
               onChange={(e) => updateMcqChoice(e.target.value, idx)}
             />
@@ -101,11 +101,11 @@ export function QuestionEditor({ question, onChange, onRemove }: Props) {
       )}
 
       {question.type === 'TEXT' && (
-        <label className="block text-sm font-medium text-slate-700">
+        <label className="block text-sm font-medium text-black">
           Reference Answer (optional)
           <input
             type="text"
-            className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
+            className="mt-2 w-full rounded-xl border border-[color:var(--border)] bg-white px-4 py-2 text-sm text-black placeholder:text-gray-700 focus:border-[color:var(--border-strong)]"
             value={(question.options.reference as string) ?? ''}
             onChange={(e) => update({ options: { ...question.options, reference: e.target.value } })}
             placeholder="Used for evaluation"
@@ -113,16 +113,36 @@ export function QuestionEditor({ question, onChange, onRemove }: Props) {
         </label>
       )}
 
-      <label className="block text-sm font-medium text-slate-700">
+      <label className="block text-sm font-medium text-black">
         Correct Option
-        <input
-          type="text"
-          className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
-          value={question.correct_option}
-          onChange={(e) => update({ correct_option: e.target.value })}
-          placeholder="Match exactly one of the options"
-          required
-        />
+        {(question.type === 'MCQ' || question.type === 'TRUE_FALSE') ? (
+          <select
+            className="mt-2 w-full rounded-xl border border-[color:var(--border)] bg-white px-4 py-2.5 text-sm text-black focus:border-[color:var(--border-strong)]"
+            value={question.correct_option}
+            onChange={(e) => update({ correct_option: e.target.value })}
+            required
+          >
+            <option value="" className="text-black bg-white">Select the correct answer</option>
+            {mcqChoices.map((choice, idx) => {
+              const keys = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+              const key = keys[idx];
+              return (
+                <option key={key} value={key} className="text-black bg-white">
+                  {key.toUpperCase()}: {choice}
+                </option>
+              );
+            })}
+          </select>
+        ) : (
+          <input
+            type="text"
+            className="mt-2 w-full rounded-xl border border-[color:var(--border)] bg-white px-4 py-2 text-sm text-black placeholder:text-gray-700 focus:border-[color:var(--border-strong)]"
+            value={question.correct_option}
+            onChange={(e) => update({ correct_option: e.target.value })}
+            placeholder="Enter the reference answer"
+            required
+          />
+        )}
       </label>
     </div>
   );

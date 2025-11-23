@@ -8,14 +8,41 @@ if (!process.env.DATABASE_URL) {
 
 const sql = neon(process.env.DATABASE_URL);
 
-export async function query(text, params = []) {
-  // neon tagged template prefers template usage; for parameterized arrays use sql(text, ...params)
-  // We keep a consistent interface like pg.query(text, params)
-  // When params is an array we spread; neon handles embedded parameters safely.
-  return sql(text, ...params);
+function buildTemplate(text, params) {
+  const parts = [];
+  const values = [];
+  let lastIndex = 0;
+  const regex = /\$([0-9]+)/g;
+  let match;
+  while ((match = regex.exec(text)) !== null) {
+    parts.push(text.slice(lastIndex, match.index));
+    const idx = Number(match[1]) - 1;
+    values.push(params[idx]);
+    lastIndex = match.index + match[0].length;
+  }
+  parts.push(text.slice(lastIndex));
+  return sql(parts, ...values);
 }
 
-// Helper to run inside transaction if needed later
-export async function transaction(fn) {
-  return await sql.transaction(fn);
+export async function query(text, params = []) {
+  const list = Array.isArray(params) ? params : [params];
+  if (/\$[0-9]+/.test(text)) return buildTemplate(text, list);
+  return sql([text]);
 }
+
+export async function transaction(work) {
+  await sql`BEGIN`;
+  try {
+    const result = await work((text, ...params) => {
+      if (/\$[0-9]+/.test(text)) return buildTemplate(text, params);
+      return sql([text]);
+    });
+    await sql`COMMIT`;
+    return result;
+  } catch (err) {
+    try { await sql`ROLLBACK`; } catch {}
+    throw err;
+  }
+}
+
+export { sql }; // expose raw tagged template for migrations

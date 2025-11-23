@@ -6,7 +6,7 @@ import type { CreateQuizPayload } from '@/lib/types';
 import { QuestionEditor, type EditableQuestion } from '@/components/QuestionEditor';
 import { StatusMessage } from '@/components/StatusMessage';
 import { Button } from '@/components/ui/Button';
-import { Card } from '@/components/ui/Card';
+import { Card, CardHeader, CardTitle, CardBody, CardFooter } from '@/components/ui/Card';
 
 function buildQuestion(): EditableQuestion {
   return {
@@ -50,12 +50,27 @@ export default function AdminPage() {
 
     const payload: CreateQuizPayload = {
       title: title.trim(),
-      questions: questions.map(({ text, type, options, correct_option }) => ({
-        text: text.trim(),
-        type,
-        options,
-        correct_option: correct_option.trim(),
-      })),
+      questions: questions.map(({ text, options, correct_option }) => {
+        // Transform options format from {choices: [...]} to {a: "...", b: "...", ...}
+        // but ONLY for MCQ/TRUE_FALSE, not for TEXT questions
+        let transformedOptions = options;
+        if ('choices' in options && Array.isArray(options.choices)) {
+          transformedOptions = {};
+          const keys = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+          options.choices.forEach((choice: string, idx: number) => {
+            if (idx < keys.length) {
+              transformedOptions[keys[idx]] = choice;
+            }
+          });
+        }
+        // For TEXT questions, options will be {placeholder: "...", reference: "..."}
+        // For MCQ/TRUE_FALSE, options will be {a: "...", b: "...", ...}
+        return {
+          text: text.trim(),
+          options: transformedOptions,
+          correct_option: correct_option.trim(),
+        };
+      }),
     };
 
     try {
@@ -72,44 +87,49 @@ export default function AdminPage() {
   };
 
   return (
-    <main className="app-container space-y-8 py-10">
-      <div className="space-y-2">
-        <h1 className="text-3xl font-semibold tracking-tight text-gray-900">Create a New Quiz</h1>
-        <p className="text-sm text-gray-600">Publish quizzes instantly. Provide clear questions and correct answers.</p>
+    <main className="app-container py-10 space-y-8">
+      <div className="space-y-3">
+        <h1 className="heading-lg text-white">Create a New Quiz</h1>
+        <p className="text-sm text-white">Publish quizzes instantly. Provide clear questions and correct answers.</p>
       </div>
-
       {status && <StatusMessage type={status.type} message={status.msg} onClose={() => setStatus(null)} />}
-
-      <form onSubmit={handleSubmit} className="space-y-8">
-        <Card className="p-6 space-y-4">
-          <label className="block text-sm font-medium text-gray-700">
-            Title
-            <input
-              type="text"
-              className="mt-2 w-full rounded-xl border border-gray-300 bg-white px-4 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="Enter quiz title"
-            />
-          </label>
-        </Card>
-        <div className="space-y-4">
-          {questions.map((question) => (
-            <QuestionEditor
-              key={question.id}
-              question={question}
-              onChange={updateQuestion}
-              onRemove={removeQuestion}
-            />
-          ))}
-          <Button type="button" onClick={addQuestion} variant="secondary" className="pressable">
-            Add Question
-          </Button>
-        </div>
-        <Button type="submit" loading={submitting} className="w-full pressable">
-          {submitting ? 'Saving…' : 'Publish Quiz'}
-        </Button>
-      </form>
+      <Card>
+        <CardHeader>
+          <CardTitle>Quiz Details</CardTitle>
+        </CardHeader>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <CardBody>
+            <label className="block text-sm font-medium text-black">
+              Title
+              <input
+                type="text"
+                className="mt-2 w-full rounded-xl border border-[color:var(--border)] bg-white px-4 py-2.5 text-sm text-black placeholder:text-gray-700 focus:border-[color:var(--border-strong)]"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="Enter quiz title"
+              />
+            </label>
+            <div className="space-y-5">
+              {questions.map((question) => (
+                <QuestionEditor
+                  key={question.id}
+                  question={question}
+                  onChange={updateQuestion}
+                  onRemove={removeQuestion}
+                />
+              ))}
+              <Button type="button" variant="secondary" onClick={addQuestion} className="w-full">
+                Add Question
+              </Button>
+            </div>
+          </CardBody>
+          <CardFooter>
+            <Button type="submit" loading={submitting} className="w-full">
+              {submitting ? 'Saving…' : 'Publish Quiz'}
+            </Button>
+          </CardFooter>
+        </form>
+      </Card>
     </main>
   );
 }
