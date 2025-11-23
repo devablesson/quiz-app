@@ -1,0 +1,63 @@
+@import "tailwindcss";
+
+/* Modern neutral palette */
+:root {
+  --background: #f5f7fa; /* cool gray */
+  --foreground: #1f2937; /* slate-800 */
+  --card: #ffffff;
+  --border: #e5e7eb;
+  --accent: #1d4ed8; /* blue-700 */
+  --accent-hover: #2563eb; /* blue-600 */
+  --accent-soft: #dbeafe; /* blue-100 */
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0f1620;
+    --foreground: #f1f5f9;
+    --card: #1e293b;
+    --border: #334155;
+    --accent: #3b82f6;
+    --accent-hover: #60a5fa;
+    --accent-soft: #1e3a8a;
+  }
+}
+
+html, body { height: 100%; }
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Utility helpers */
+.app-container { @apply mx-auto max-w-5xl px-4 md:px-8; }
+.card-base { @apply rounded-2xl bg-white shadow-sm ring-1 ring-gray-200/70 transition; }
+.dark .card-base { @apply bg-[color:var(--card)] ring-[color:var(--border)]; }
+
+/* Button animation scaling */
+.pressable { @apply transition-transform duration-200 ease-out; }
+.pressable:hover { transform: translateY(-1px); }
+.pressable:active { transform: translateY(0); }
+
+/* Scrollbars subtle */
+* { scrollbar-width: thin; }
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 12px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+/* Smooth fade */
+.fade-in { animation: fadeIn .3s ease; }
+@keyframes fadeIn { from { opacity:0; transform: translateY(4px);} to { opacity:1; transform: translateY(0);} }
+
