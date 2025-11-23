@@ -1,8 +1,8 @@
 // backend/db.js
 import dotenv from 'dotenv';
 dotenv.config();
-import pkg from 'pg';
 
+import pkg from 'pg';
 const { Pool } = pkg;
 
 if (!process.env.DATABASE_URL) {
@@ -11,20 +11,35 @@ if (!process.env.DATABASE_URL) {
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false }   // Neon requires SSL
+  ssl: { rejectUnauthorized: false }  // Neon requires SSL
 });
 
+/**
+ * Standard query function that always returns result.rows
+ */
 export async function query(text, params = []) {
-  return pool.query(text, params);
+  const result = await pool.query(text, params);
+  return result.rows;   // <-- IMPORTANT FIX
 }
 
+/**
+ * Transaction helper: ensures COMMIT/ROLLBACK
+ * run(text, ...params) will return only rows
+ */
 export async function transaction(work) {
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
-    const result = await work((text, params) => client.query(text, params));
+
+    const run = async (text, ...params) => {
+      const result = await client.query(text, params);
+      return result.rows;   // <-- ALSO FIXED
+    };
+
+    const output = await work(run);
+
     await client.query('COMMIT');
-    return result;
+    return output;
   } catch (err) {
     await client.query('ROLLBACK');
     throw err;
